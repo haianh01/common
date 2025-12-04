@@ -1,2 +1,2 @@
-@rslab:registry=https://npm.pkg.github.com
+@haianh01:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}

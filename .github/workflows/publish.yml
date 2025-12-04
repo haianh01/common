@@ -1,0 +1,40 @@
+name: Publish Packages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@rslab"
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build packages
+        run: npm run build
+
+      - name: Publish packages
+        # npm publish --workspaces will publish all packages defined in workspaces
+        # --if-present prevents errors if a workspace doesn't have a publish script (though npm publish usually works by default)
+        # We use 'npm publish' which respects the publishConfig in package.json
+        run: npm publish --workspaces --access restricted
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
